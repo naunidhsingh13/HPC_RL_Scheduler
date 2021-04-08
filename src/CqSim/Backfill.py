@@ -17,7 +17,7 @@ class Backfill:
         self.debug.debug("# "+self.myInfo,1)
         self.debug.line(4,"#")
         
-    def reset(self, mode = None, ad_mode = None, node_module = None, debug = None, para_list = None):
+    def reset (self, mode = None, ad_mode = None, node_module = None, debug = None, para_list = None):
         #self.debug.debug("* "+self.myInfo+" -- reset",5)
         if mode:
             self.mode = mode
@@ -32,7 +32,7 @@ class Backfill:
         self.current_para = []
         self.wait_job = []
     
-    def backfill (self, wait_job, para_in=None):
+    def backfill (self, wait_job, para_in = None):
         #self.debug.debug("* "+self.myInfo+" -- backfill",5)
         if (len(wait_job) <= 1):
             return []

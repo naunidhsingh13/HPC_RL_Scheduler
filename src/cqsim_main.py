@@ -10,7 +10,6 @@ import CqSim.Start_window as Class_Start_window
 import CqSim.Basic_algorithm as Class_Basic_algorithm
 import CqSim.Info_collect as Class_Info_collect
 import CqSim.Cqsim_sim as Class_Cqsim_sim
-from CqSim.Cqsim_Env import Cqsim_Env
 
 import Extend.SWF.Filter_job_SWF as filter_job_ext
 import Extend.SWF.Filter_node_SWF as filter_node_ext
@@ -18,7 +17,7 @@ import Extend.SWF.Node_struc_SWF as node_struc_ext
 
 
 
-def cqsim_main(para_list):
+def  cqsim_main(para_list):
     print("....................")
     for item in para_list :
         print(str(item) + ": " + str(para_list[item]))
@@ -103,14 +102,8 @@ def cqsim_main(para_list):
     
     # Cqsim Simulator
     print(".................... Cqsim Simulator")
-    module_list = {'job': module_job_trace, 'node': module_node_struc, 'backfill': module_backfill,\
-                   'win': module_win, 'alg': module_alg, 'info': module_info_collect, 'output': module_output_log}
-    env_sim = Cqsim_Env(module=module_list, debug=module_debug)  # , monitor = para_list['monitor'])
-
-    steps = 1000
-    while steps and not env_sim.done:
-        steps -= 1
-        actions = env_sim.get_action()
-        env_sim.step(actions)
-
+    module_list = {'job':module_job_trace,'node':module_node_struc,'backfill':module_backfill,\
+                   'win':module_win,'alg':module_alg,'info':module_info_collect, 'output':module_output_log}
+    module_sim = Class_Cqsim_sim.Cqsim_sim(module=module_list, debug=module_debug)
+    module_sim.cqsim_sim()
     #module_debug.end_debug()

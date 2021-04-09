@@ -2,6 +2,7 @@ import os
 import cqsim_path
 import IOModule.Debug_log as Class_Debug_log
 import IOModule.Output_log as Class_Output_log
+from time import time
 
 import CqSim.Job_trace as Class_Job_trace
 #import CqSim.Node_struc as Class_Node_struc
@@ -10,6 +11,7 @@ import CqSim.Start_window as Class_Start_window
 import CqSim.Basic_algorithm as Class_Basic_algorithm
 import CqSim.Info_collect as Class_Info_collect
 import CqSim.Cqsim_sim as Class_Cqsim_sim
+from CqSim.Gym import CqsimEnv
 
 import Extend.SWF.Filter_job_SWF as filter_job_ext
 import Extend.SWF.Filter_node_SWF as filter_node_ext
@@ -104,6 +106,21 @@ def  cqsim_main(para_list):
     print(".................... Cqsim Simulator")
     module_list = {'job':module_job_trace,'node':module_node_struc,'backfill':module_backfill,\
                    'win':module_win,'alg':module_alg,'info':module_info_collect, 'output':module_output_log}
-    module_sim = Class_Cqsim_sim.Cqsim_sim(module=module_list, debug=module_debug)
-    module_sim.cqsim_sim()
+    # module_sim = Class_Cqsim_sim.Cqsim_sim(module=module_list, debug=module_debug)
+    # module_sim.cqsim_sim()
+
+    cqsim_env = CqsimEnv(module=module_list, debug=module_debug)
+
+    current_state = cqsim_env.get_state()
+    done = False
+    a = time()
+    while not done:
+        if current_state:
+            action = current_state[-1]  # fcfs for now. Will be changed to model.predict()
+        else:
+            action = None
+        current_state, done = cqsim_env.step(action)
+
+    print("Total Completion time")
+    print(time() - a)
     #module_debug.end_debug()

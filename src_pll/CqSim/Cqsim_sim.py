@@ -1,10 +1,16 @@
 import IOModule.Log_print as Log_print
+from threading import Thread
+from CqSim.Pause import Pause
 
 __metaclass__ = type
 
 
-class Cqsim_sim:
+class Cqsim_sim(Thread, Pause):
+
     def __init__(self, module, debug=None):
+        Thread.__init__(self)
+        Pause.__init__(self)
+
         self.myInfo = "Cqsim Sim"
         self.module = module
         self.debug = debug
@@ -29,7 +35,14 @@ class Cqsim_sim:
             temp_name = self.module[module_name].myInfo
             self.debug.debug(temp_name+" ................... Load",4)
             self.debug.line(4)
-        
+
+        self.simulator_state = None
+        self.is_simulation_complete = False
+
+    def run(self) -> None:
+
+        self.cqsim_sim()
+
     def reset(self, module = None, debug = None, monitor = None):
         if module:
             self.module = module
@@ -38,25 +51,27 @@ class Cqsim_sim:
             self.debug = debug
         if monitor:
             self.monitor = monitor
-               
-            
-        self.event_seq = []
 
+        self.event_seq = []
         self.current_event = None
-        #obsolete
+        # obsolete
         self.job_num = len(self.module['job'].job_info())
         self.currentTime = 0
-        #obsolete
+        # obsolete
         self.read_job_buf_size = 100
         self.read_job_pointer = 0
         self.previous_read_job_time = -1
-        
+
     def cqsim_sim(self):
 
         self.import_submit_events()
         self.scan_event()
 
         self.print_result()
+
+        self.is_simulation_complete = True
+        self.release_all()
+
         self.debug.debug("------ Simulating Done!",2)
         self.debug.debug(lvl=1)
         return
@@ -156,7 +171,7 @@ class Cqsim_sim:
             self.submit(self.current_event['para'][1])
         elif (self.current_event['para'][0] == 2):
             self.finish(self.current_event['para'][1])
-        self.score_calculate()
+        # self.score_calculate()
         self.start_scan()
     
     def submit(self, job_index):
@@ -174,14 +189,14 @@ class Cqsim_sim:
         self.module['job'].remove_job_from_dict(job_index)
         return
     
-    def start(self, job_index):
-        #self.debug.debug("# "+self.myInfo+" -- start",5) 
+    def start_job(self, job_index):
+        # self.debug.debug("# "+self.myInfo+" -- start",5)
         self.debug.debug("[Start]  "+str(job_index), 3)
         self.module['node'].node_allocate(self.module['job'].job_info(job_index)['reqProc'], job_index,
                                           self.currentTime, self.currentTime +
                                           self.module['job'].job_info(job_index)['reqTime'])
         self.module['job'].job_start(job_index, self.currentTime)
-        self.insert_event(1, self.currentTime+self.module['job'].job_info(job_index)['run'],1,[2,job_index])
+        self.insert_event(1, self.currentTime+self.module['job'].job_info(job_index)['run'], 1, [2, job_index])
         return
     
     def score_calculate(self):
@@ -200,19 +215,23 @@ class Cqsim_sim:
     
     def start_scan(self):
         start_max = self.module['win'].start_num()
-        temp_wait = self.module['job'].wait_list()
-        wait_num = len(temp_wait)
+        temp_wait = list(reversed(self.module['job'].wait_list()))
         win_count = start_max
 
         i = 0
-        while (i<wait_num):
+        while temp_wait:
             if (win_count >= start_max):
                 win_count = 0
                 temp_wait = self.start_window(temp_wait)
 
-            temp_job = self.module['job'].job_info(temp_wait[i])
+            self.simulator_state = temp_wait
+            self.pause_consumer()
+            temp_wait = self.simulator_state
+
+            temp_job_id = temp_wait.pop()
+            temp_job = self.module['job'].job_info(temp_job_id)
             if self.module['node'].is_available(temp_job['reqProc']):
-                self.start(temp_wait[i])
+                self.start_job(temp_job_id)
             else:
                 temp_wait = self.module['job'].wait_list()
                 self.backfill(temp_wait)
@@ -255,13 +274,13 @@ class Cqsim_sim:
             temp_wait_info.append({"index": temp_wait[i], "proc": temp_job['reqProc'],
                                    "node": temp_job['reqProc'], "run": temp_job['run'], "score": temp_job['score']})
             i += 1
-        backfill_list = self.module['backfill'].backfill(temp_wait_info, {'time':self.currentTime})
-        #self.debug.debug("HHHHHHHHHHHHH "+str(backfill_list)+" -- backfill",2) 
+        backfill_list = self.module['backfill'].backfill(temp_wait_info, {'time': self.currentTime})
+
         if not backfill_list:
             return 0
         
         for job in backfill_list:
-            self.start(job)
+            self.start_job(job)
         return 1
     
     def sys_collect(self):

@@ -1,0 +1,2 @@
+python cqsim.py -j test.swf -n test.swf
+python cqsim.py -j theta_data.swf -n theta_data.swf

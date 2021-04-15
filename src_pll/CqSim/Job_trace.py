@@ -60,7 +60,7 @@ class Job_trace:
     def initial_import_job_file(self, job_file):
         self.temp_start=self.start
         #regex_str = "([^;\\n]*)[;\\n]"
-        self.jobFile = open(job_file,'r')
+        self.jobFile = job_file
         self.min_sub = -1
         self.jobTrace={}
         self.reset_data()
@@ -70,138 +70,71 @@ class Job_trace:
         #self.dyn_import_job_file()
 
     def dyn_import_job_file(self):
-        if self.jobFile.closed:
-            return -1
+
         temp_n = 0
         regex_str = "([^;\\n]*)[;\\n]"
-        while (self.i<self.read_num or self.read_num<=0) and temp_n<self.read_input_freq:
-            tempStr = self.jobFile.readline()
-            if not tempStr :    # break when no more line
-                self.jobFile.close()
-                return -1
-                #break
-            if (self.j>=self.anchor):
-                temp_dataList=re.findall(regex_str,tempStr)
-                    
-                if (self.min_sub<0):
-                    self.min_sub=float(temp_dataList[1])
-                    if (self.temp_start < 0):
-                        self.temp_start = self.min_sub
-                    self.start_offset_B = self.min_sub-self.temp_start
-                    
-                tempInfo = {'id':int(temp_dataList[0]),\
-                            'submit':self.density*(float(temp_dataList[1])-self.min_sub)+self.temp_start,\
-                            'wait':float(temp_dataList[2]),\
-                            'run':float(temp_dataList[3]),\
-                            'usedProc':int(temp_dataList[4]),\
-                            'usedAveCPU':float(temp_dataList[5]),\
-                            'usedMem':float(temp_dataList[6]),\
-                            'reqProc':int(temp_dataList[7]),\
-                            'reqTime':float(temp_dataList[8]),\
-                            'reqMem':float(temp_dataList[9]),\
-                            'status':int(temp_dataList[10]),\
-                            'userID':int(temp_dataList[11]),\
-                            'groupID':int(temp_dataList[12]),\
-                            'num_exe':int(temp_dataList[13]),\
-                            'num_queue':int(temp_dataList[14]),\
-                            'num_part':int(temp_dataList[15]),\
-                            'num_pre':int(temp_dataList[16]),\
-                            'thinkTime':int(temp_dataList[17]),\
-                            'start':-1,\
-                            'end':-1,\
-                            'score':0,\
-                            'state':0,\
-                            'happy':-1,\
-                            'estStart':-1}
-                #self.jobTrace.append(tempInfo)
-                self.jobTrace[self.i] = tempInfo
-                self.job_submit_list.append(self.i)
-                self.debug.debug(temp_dataList,4)
-                #self.debug.debug("* "+str(tempInfo),4)
-                self.i += 1      
-            self.j += 1
-            temp_n += 1
-            return 0
-    
-    def import_job_file (self, job_file):
-        #self.debug.debug("* "+self.myInfo+" -- import_job_file",5)
-        temp_start=self.start
-        regex_str = "([^;\\n]*)[;\\n]"
-        jobFile = open(job_file,'r')
-        min_sub = -1
-        self.jobTrace={}
-        self.reset_data()
-        
-        self.debug.line(4)
-        i = 0
-        j = 0
-        while (i<self.read_num or self.read_num<=0):
-            tempStr = jobFile.readline()
-            if not tempStr :    # break when no more line
-                break
-            if (j>=self.anchor):
-                temp_dataList=re.findall(regex_str,tempStr)
-                    
-                if (min_sub<0):
-                    min_sub=float(temp_dataList[1])
-                    if (temp_start < 0):
-                        temp_start = min_sub
-                    self.start_offset_B = min_sub-temp_start
-                    
-                tempInfo = {'id':int(temp_dataList[0]),\
-                            'submit':self.density*(float(temp_dataList[1])-min_sub)+temp_start,\
-                            'wait':float(temp_dataList[2]),\
-                            'run':float(temp_dataList[3]),\
-                            'usedProc':int(temp_dataList[4]),\
-                            'usedAveCPU':float(temp_dataList[5]),\
-                            'usedMem':float(temp_dataList[6]),\
-                            'reqProc':int(temp_dataList[7]),\
-                            'reqTime':float(temp_dataList[8]),\
-                            'reqMem':float(temp_dataList[9]),\
-                            'status':int(temp_dataList[10]),\
-                            'userID':int(temp_dataList[11]),\
-                            'groupID':int(temp_dataList[12]),\
-                            'num_exe':int(temp_dataList[13]),\
-                            'num_queue':int(temp_dataList[14]),\
-                            'num_part':int(temp_dataList[15]),\
-                            'num_pre':int(temp_dataList[16]),\
-                            'thinkTime':int(temp_dataList[17]),\
-                            'start':-1,\
-                            'end':-1,\
-                            'score':0,\
-                            'state':0,\
-                            'happy':-1,\
-                            'estStart':-1}
-                #self.jobTrace.append(tempInfo)
-                self.jobTrace[self.i] = tempInfo
-                self.job_submit_list.append(i)
-                self.debug.debug(temp_dataList,4)
-                #self.debug.debug("* "+str(tempInfo),4)
-                i += 1      
-            j += 1
-            
-        self.debug.line(4)
-        jobFile.close()
-        #print('jobFile',jobFile,jobFile.closed)
+        with open(self.jobFile, 'r') as jf:
+            while (self.i < self.read_num or self.read_num <= 0) and temp_n < self.read_input_freq:
+                tempStr = jf.readline()
+                if not tempStr:
+                    return -1
+
+                if (self.j >= self.anchor):
+                    temp_dataList = re.findall(regex_str, tempStr)
+
+                    if (self.min_sub < 0):
+                        self.min_sub = float(temp_dataList[1])
+                        if (self.temp_start < 0):
+                            self.temp_start = self.min_sub
+                        self.start_offset_B = self.min_sub - self.temp_start
+
+                    tempInfo = {'id': int(temp_dataList[0]),
+                                'submit': self.density * (float(temp_dataList[1]) - self.min_sub) + self.temp_start,
+                                'wait': float(temp_dataList[2]),
+                                'run': float(temp_dataList[3]),
+                                'usedProc': int(temp_dataList[4]),
+                                'usedAveCPU': float(temp_dataList[5]),
+                                'usedMem': float(temp_dataList[6]),
+                                'reqProc': int(temp_dataList[7]),
+                                'reqTime': float(temp_dataList[8]),
+                                'reqMem': float(temp_dataList[9]),
+                                'status': int(temp_dataList[10]),
+                                'userID': int(temp_dataList[11]),
+                                'groupID': int(temp_dataList[12]),
+                                'num_exe': int(temp_dataList[13]),
+                                'num_queue': int(temp_dataList[14]),
+                                'num_part': int(temp_dataList[15]),
+                                'num_pre': int(temp_dataList[16]),
+                                'thinkTime': int(temp_dataList[17]),
+                                'start': -1,
+                                'end': -1,
+                                'score': 0,
+                                'state': 0,
+                                'happy': -1,
+                                'estStart': -1,
+                                'backfill': -1,
+                                }
+                    self.jobTrace[self.i] = tempInfo
+                    self.job_submit_list.append(self.i)
+                    self.i += 1
+                self.j += 1
+                temp_n += 1
+                return 0
     
     def import_job_config (self, config_file):
-        #self.debug.debug("* "+self.myInfo+" -- import_job_config",5)
         regex_str = "([^=\\n]*)[=\\n]"
-        jobFile = open(config_file,'r')
-        config_data={}
-                
-        self.debug.line(4)
-        while (1):
-            tempStr = jobFile.readline()
-            if not tempStr :    # break when no more line
-                break
-            temp_dataList=re.findall(regex_str,tempStr)
-            config_data[temp_dataList[0]]=temp_dataList[1]
-            self.debug.debug(str(temp_dataList[0])+": "+str(temp_dataList[1]),4)
-        self.debug.line(4)
-        jobFile.close()
-        self.start_offset_A = config_data['start_offset']
-        self.start_date = config_data['date']
+        config_data = {}
+
+        with open(config_file, 'r') as cf:
+            while 1:
+                tempStr = cf.readline()
+                if not tempStr:  # break when no more line
+                    self.start_offset_A = config_data['start_offset']
+                    self.start_date = config_data['date']
+                    return None
+
+                temp_dataList = re.findall(regex_str, tempStr)
+                config_data[temp_dataList[0]] = temp_dataList[1]
     
     def submit_list (self):
         #self.debug.debug("* "+self.myInfo+" -- submit_list",6)

@@ -16,11 +16,11 @@ class Log_print:
         self.logFile=None
     
     def file_open(self):
-        self.logFile = open(self.filePath,self.mode)
+        # self.logFile = open(self.filePath,self.mode)
         return 1
     
     def file_close(self):
-        self.logFile.close()
+        # self.logFile.close()
         return 1
     
     def log_print(self, context, isEnter=1):

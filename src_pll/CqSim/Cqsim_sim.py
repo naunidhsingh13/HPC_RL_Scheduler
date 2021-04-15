@@ -1,4 +1,5 @@
 import IOModule.Log_print as Log_print
+import random
 from threading import Thread
 from CqSim.Pause import Pause
 
@@ -7,41 +8,32 @@ __metaclass__ = type
 
 class Cqsim_sim(Thread, Pause):
 
-    def __init__(self, module, debug=None):
+    def __init__(self, config):
         Thread.__init__(self)
         Pause.__init__(self)
 
         self.myInfo = "Cqsim Sim"
-        self.module = module
-        self.debug = debug
-        
-        self.debug.line(4," ")
-        self.debug.line(4,"#")
-        self.debug.debug("# "+self.myInfo,1)
-        self.debug.line(4,"#")
-        
+        self.module = config["module"]
+        self.debug = self.module["debug"]
         self.event_seq = []
         self.current_event = None
-        #obsolete
-        self.job_num = len(self.module['job'].job_info())
         self.currentTime = 0
-        #obsolete
         self.read_job_buf_size = 100
         self.read_job_pointer = 0 # next position in job list
         self.previous_read_job_time = -1 # lastest read job submit time
         
-        self.debug.line(4)
         for module_name in self.module:
             temp_name = self.module[module_name].myInfo
-            self.debug.debug(temp_name+" ................... Load",4)
+            print(temp_name+" ................... Load",4)
             self.debug.line(4)
 
-        self.simulator_state = None
-        self.is_simulation_complete = False
+        self.state = None
+        self.is_complete = False
 
-    def run(self) -> None:
-
-        self.cqsim_sim()
+    def start(self):
+        self.import_submit_events()
+        self.current_event = self.event_seq[0]
+        self.start_scan()
 
     def reset(self, module = None, debug = None, monitor = None):
         if module:
@@ -54,27 +46,13 @@ class Cqsim_sim(Thread, Pause):
 
         self.event_seq = []
         self.current_event = None
-        # obsolete
-        self.job_num = len(self.module['job'].job_info())
         self.currentTime = 0
-        # obsolete
         self.read_job_buf_size = 100
-        self.read_job_pointer = 0
+        self.read_job_pointer = random.randint(0, self.module['job'].job_info_len() - 1)
         self.previous_read_job_time = -1
 
-    def cqsim_sim(self):
+        self.start()
 
-        self.import_submit_events()
-        self.scan_event()
-
-        self.print_result()
-
-        self.is_simulation_complete = True
-        self.release_all()
-
-        self.debug.debug("------ Simulating Done!",2)
-        self.debug.debug(lvl=1)
-        return
 
     def import_submit_events(self):
         # fread jobs to job list and buffer to event_list dynamically
@@ -97,11 +75,9 @@ class Cqsim_sim(Thread, Pause):
             return 0
     
     def insert_event(self, type, time, priority, para = None):
-        #self.debug.debug("# "+self.myInfo+" -- insert_event",5) 
         temp_index = -1
-        new_event = {"type":type, "time":time, "prio":priority, "para":para}
+        new_event = {"type": type, "time": time, "prio": priority, "para": para}
         if (type == 1):
-            #i = self.event_pointer
             i = 0
             while (i<len(self.event_seq)):
                 if (self.event_seq[i]['time']==time):
@@ -224,9 +200,9 @@ class Cqsim_sim(Thread, Pause):
                 win_count = 0
                 temp_wait = self.start_window(temp_wait)
 
-            self.simulator_state = temp_wait
+            self.state = temp_wait
             self.pause_consumer()
-            temp_wait = self.simulator_state
+            temp_wait = self.state
 
             temp_job_id = temp_wait.pop()
             temp_job = self.module['job'].job_info(temp_job_id)

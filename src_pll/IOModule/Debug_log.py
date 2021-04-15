@@ -35,20 +35,7 @@ class Debug_log:
         self.lvl = lvl
 
     def debug(self,context = None,lvl=3):
-        if (lvl<=self.lvl):
-            if context != None:
-                self.debug_log_buf.append(context)
-            if (len(self.debug_log_buf) >= self.log_freq) or (context == None):
-                self.debugFile.file_open()
-                #print self.debug_log_buf
-                for debug_log in self.debug_log_buf:
-                    self.debugFile.log_print(debug_log,1)
-                    #print debug_log
-                self.debugFile.file_close()
-                self.debug_log_buf = []
-            if (lvl>=self.show) and (context != None):
-                print(context)
-                #pass
+        return None
         
     def line(self,lvl=1,signal="-",num=15):
         if (lvl<=self.lvl):

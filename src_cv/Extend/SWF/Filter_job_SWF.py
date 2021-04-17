@@ -22,12 +22,12 @@ class Filter_job_SWF(filter_job.Filter_job):
             return
         
         sep_sign = ";"
-        f2=open(self.save,"w")
+        f2=open(self.save, "w")
 
-        nr_sign =';'    # Not read sign. Mark the line not the job data
-        sept_sign =' '   # The sign seperate data in a line
+        nr_sign = ';'    # Not read sign. Mark the line not the job data
+        sept_sign = ' '   # The sign seperate data in a line
         
-        jobFile = open(self.trace,'r')
+        jobFile = open(self.trace, 'r')
         min_sub = -1
         temp_readNum=0
         temp_start=0

@@ -336,33 +336,33 @@ class Node_struc:
         return pre_info_last
         
     def pre_reset(self, time):
-        #self.debug.debug("* "+self.myInfo+" -- pre_reset",5)  
+        #self.debug.debug("* "+self.myInfo+" -- pre_reset",5)
         self.predict_node = []
         self.predict_job = []
         temp_list = []
         i = 0
-        while i< self.tot:
+        while i < self.tot:
             temp_list.append(self.nodeStruc[i]['state'])
             i += 1
-        self.predict_node.append({'time':time, 'node':temp_list,\
-                            'idle':self.idle, 'avail':self.avail})
+        self.predict_node.append({'time': time, 'node': temp_list,
+                                  'idle': self.idle, 'avail': self.avail})
                             
         temp_job_num = len(self.job_list)
         i = 0
         j = 0
-        while i< temp_job_num:
-            if (self.predict_node[j]['time']!=self.job_list[i]['end'] or i == 0):
+        while i < temp_job_num:
+            if self.predict_node[j]['time'] != self.job_list[i]['end'] or i == 0:
                 temp_list = []
                 k = 0
-                while k< self.tot:
+                while k < self.tot:
                     temp_list.append(self.predict_node[j]['node'][k])
                     k += 1
-                self.predict_node.append({'time':self.job_list[i]['end'], 'node':temp_list,\
-                                    'idle':self.predict_node[j]['idle'], 'avail':self.predict_node[j]['avail']})
+                self.predict_node.append({'time': self.job_list[i]['end'], 'node': temp_list,
+                                          'idle': self.predict_node[j]['idle'], 'avail': self.predict_node[j]['avail']})
                 j += 1
-            k=0
-            while k< self.tot:
-                if (self.predict_node[j]['node'][k] == self.job_list[i]['job']):
+            k = 0
+            while k < self.tot:
+                if self.predict_node[j]['node'][k] == self.job_list[i]['job']:
                     self.predict_node[j]['node'][k] = -1
                     self.predict_node[j]['idle'] += 1
                 k += 1

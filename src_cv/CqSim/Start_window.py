@@ -35,7 +35,7 @@ class Start_window:
         
         self.reset_list()
         
-    def reset(self, mode = None,  ad_mode = None, node_module = None, debug = None, para_list = None, para_list_ad = None):
+    def reset (self, mode = None,  ad_mode = None, node_module = None, debug = None, para_list = None, para_list_ad = None):
         #self.debug.debug("* "+self.myInfo+" -- reset",5) 
         if mode:
             self.mode = mode
@@ -67,7 +67,7 @@ class Start_window:
         self.seq_list = []
         self.reset_list()
     
-    def start_window(self, wait_job, para_in = None):
+    def start_window (self, wait_job, para_in = None):
         #self.debug.debug("* "+self.myInfo+" -- start_window",5) 
         self.current_para = para_in
         temp_len = len(wait_job)

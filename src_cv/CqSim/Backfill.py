@@ -17,7 +17,7 @@ class Backfill:
         self.debug.debug("# "+self.myInfo,1)
         self.debug.line(4,"#")
         
-    def reset(self, mode = None, ad_mode = None, node_module = None, debug = None, para_list = None):
+    def reset (self, mode = None, ad_mode = None, node_module = None, debug = None, para_list = None):
         #self.debug.debug("* "+self.myInfo+" -- reset",5)
         if mode:
             self.mode = mode
@@ -32,7 +32,7 @@ class Backfill:
         self.current_para = []
         self.wait_job = []
     
-    def backfill (self, wait_job, para_in=None):
+    def backfill (self, wait_job, para_in = None):
         #self.debug.debug("* "+self.myInfo+" -- backfill",5)
         if (len(wait_job) <= 1):
             return []
@@ -56,7 +56,7 @@ class Backfill:
     
     def backfill_EASY(self):
         #self.debug.debug("* "+self.myInfo+" -- backfill_EASY",5)
-        backfill_list=[]
+        backfill_list = []
         self.node_module.pre_reset(self.current_para['time'])
         '''
         self.debug.line(4,'.')
@@ -70,12 +70,33 @@ class Backfill:
         job_num = len(self.wait_job)
         while (i < job_num):
             backfill_test = 0
-            backfill_test = self.node_module.pre_avail(self.wait_job[i]['proc'],\
-                    self.current_para['time'], self.current_para['time']+self.wait_job[i]['run'])
+            backfill_test = self.node_module.pre_avail(self.wait_job[i]['proc'], self.current_para['time'],
+                                                       self.current_para['time'] + self.wait_job[i]['run'])
             if (backfill_test == 1):
                 backfill_list.append(self.wait_job[i]['index'])
                 self.node_module.reserve(self.wait_job[i]['proc'], self.wait_job[i]['index'], self.wait_job[i]['run'])
             i += 1
+        return backfill_list
+
+    def backfill_RL(self):
+        # self.debug.debug("* "+self.myInfo+" -- backfill_EASY",5)
+        backfill_list = []
+        self.node_module.pre_reset(self.current_para['time'])
+
+        self.node_module.reserve(self.wait_job[0]['proc'], self.wait_job[0]['index'], self.wait_job[0]['run'])
+        i = 1
+        job_num = len(self.wait_job)
+        while (i < job_num):
+            backfill_test = 0
+            backfill_test = self.node_module.pre_avail(self.wait_job[i]['proc'], self.current_para['time'],
+                                                       self.current_para['time'] + self.wait_job[i]['run'])
+            if (backfill_test == 1):
+                backfill_list.append(self.wait_job[i]['index'])
+                self.node_module.reserve(self.wait_job[i]['proc'], self.wait_job[i]['index'], self.wait_job[i]['run'])
+            i += 1
+
+        # Reorder
+
         return backfill_list
         
     def backfill_cons(self):

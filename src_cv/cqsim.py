@@ -434,9 +434,9 @@ if __name__ == "__main__":
                    item=="ad_win_para" or \
                    item=="ad_bf_para" or \
                    item=="ad_alg_para":
-                    inputPara[item] = get_list(inputPara_sys[item], r'([^,]+)')
+                    inputPara[item]=get_list(inputPara_sys[item],r'([^,]+)')
                 else:  
-                    inputPara[item] = str(inputPara_sys[item])
+                    inputPara[item]=str(inputPara_sys[item])
             else:
                 inputPara[item]=None
                 

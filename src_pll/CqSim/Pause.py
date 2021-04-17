@@ -1,4 +1,7 @@
 from threading import Lock
+import time
+
+SLEEP_TIME = 0.001
 
 
 class Pause:
@@ -22,20 +25,20 @@ class Pause:
     def pause_producer(self):
         self._impl_pause(True)
         while self._impl_pause():
-            pass
+            time.sleep(SLEEP_TIME)
 
     def pause_consumer(self):
         self._impl_pause(False)
         while not self._impl_pause():
-            pass
+            time.sleep(SLEEP_TIME)
 
     def is_consumer_paused(self):
         while not self._impl_pause():
-            pass
+            time.sleep(SLEEP_TIME)
 
     def is_producer_paused(self):
         while self._impl_pause():
-            pass
+            time.sleep(SLEEP_TIME)
 
     def release_all(self):
         self._release_all = True

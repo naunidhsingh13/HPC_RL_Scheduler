@@ -1,6 +1,7 @@
 
 __metaclass__ = type
 
+
 class Basic_algorithm:
     def __init__ (self, ad_mode = 0, element = None, debug = None, para_list = None, ad_para_list=None):
         self.myInfo = "Basic Algorithm"
@@ -23,7 +24,7 @@ class Basic_algorithm:
             self.algStr += self.element[0][i]
             i += 1
     
-    def reset (self, ad_mode = None, element = None, debug = None, paralist = None, ad_para_list=None):
+    def reset (self, ad_mode = None, element = None, debug = None, para_list = None, ad_para_list=None):
         #self.debug.debug("* "+self.myInfo+" -- reset",5)
         if ad_mode :
             self.ad_mode = ad_mode 

@@ -1,6 +1,7 @@
 from threading import Condition
 import time
 
+
 class Pause:
 
     def __init__(self):

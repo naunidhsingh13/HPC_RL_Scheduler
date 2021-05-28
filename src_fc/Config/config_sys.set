@@ -25,3 +25,4 @@ job_info_size=4
 is_training=1
 input_weight_file=
 output_weight_file=new_weights
+do_render=0

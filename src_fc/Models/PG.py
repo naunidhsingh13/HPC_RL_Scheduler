@@ -30,7 +30,7 @@ class PG:
         conv1d_reshape = tf.reshape(conv1d, [-1, obs_shape[1]])
         hidden_layer1 = tf.keras.layers.Dense(4000, 'relu', input_shape=(obs_shape[1],), use_bias=False)(conv1d_reshape)
         hidden_layer2 = tf.keras.layers.Dense(1000, 'relu', input_shape=(4000,), use_bias=False)(hidden_layer1)
-        output = tf.keras.layers.Dense(self.window_size, activation='sigmoid')(hidden_layer2)
+        output = tf.keras.layers.Dense(self.window_size, activation='softmax')(hidden_layer2)
 
         def custom_loss(y_true, y_pred):
             out = K.clip(y_pred, 1e-8, 1-1e-8)

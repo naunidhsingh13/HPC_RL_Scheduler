@@ -239,7 +239,9 @@ class Cqsim_sim(Pause, Thread):
                 win_count = 0
                 temp_wait = self.start_window(temp_wait)
 
+            # ************ #
             # Communicate with GymEnvironment.
+            # ************ #
             temp_wait = self.reorder_queue(temp_wait)
 
             temp_job_id = temp_wait[0]
@@ -325,7 +327,6 @@ class Cqsim_sim(Pause, Thread):
                                                      waitSize=self.module['job'].wait_size(), inter=temp_inter)
         self.print_sys_info(temp_info)
         return
-    
 
     def print_sys_info(self, sys_info):
         self.module['output'].print_sys_info(sys_info)
@@ -337,4 +338,3 @@ class Cqsim_sim(Pause, Thread):
         self.module['output'].print_sys_info()
         self.debug.debug(lvl=1)
         self.module['output'].print_result(self.module['job'])
-        

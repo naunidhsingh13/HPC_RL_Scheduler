@@ -50,6 +50,7 @@ be saved. Just as in DRAS PG, only the common part of the 2
 weights file is required. “_policy_.h5” and “_predict_.h5” are
 concatenated automatically. Weights are not saved if the parameter
 is empty or not provided.
+* **do_render** : [int] 1 - if the rendering graphics should be displayed, 0 - otherwise.
 
 These arguments can be managed externally in the following way :
 

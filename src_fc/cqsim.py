@@ -318,6 +318,9 @@ if __name__ == "__main__":
                  default="",
                  help="path to save weights for DeepRL model (not used if is_training is 1)")
 
+    p.add_option("--do_render", dest="do_render", type="string",
+                 help="1 if enable rendering 0 otherwise.")
+
     opts, args = p.parse_args()
 
     inputPara = {}
@@ -444,19 +447,7 @@ if __name__ == "__main__":
     inputPara['path_weights'] = opts.path_weights
     inputPara['input_weight_file'] = opts.input_weight_file
     inputPara['output_weight_file'] = opts.output_weight_file
-
-
-#job_info_size=4
-# epsilon=1.0
-# epsilon_decay=0.99
-# epsilon_min=0.01
-# lambda=0.6
-#       training_batch_size=10
-#       discount_span=7200
-#       reward_type=5
-#       sleep=0
-#       weight_name=weights_4000_1000_2019_prob_w_accu
-#       is_training=1
+    inputPara['do_render'] = opts.do_render
 
     for item in inputPara_name:
         if not inputPara[item]:
@@ -498,6 +489,8 @@ if __name__ == "__main__":
     inputPara['path_debug'] = cqsim_path.path_data + inputPara['path_debug']
     inputPara['path_weights'] = cqsim_path.path_data + inputPara['path_weights']
     inputPara['alg_sign'] = alg_sign_check(inputPara['alg_sign'], len(inputPara['alg']))
+
+    # Append Relative path to file names only if the Filenames exist.
     if inputPara['input_weight_file']:
         inputPara['input_weight_file'] = inputPara['path_weights'] + inputPara['input_weight_file']
     if inputPara['output_weight_file']:

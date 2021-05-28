@@ -3,23 +3,25 @@ from matplotlib import pyplot as plt
 
 class GymGraphics:
 
-    def __init__(self, render_interval=1, render_pause=0.01):
+    def __init__(self, do_render=False, render_interval=1, render_pause=0.01):
 
         # Maintaining Variables for Rendering Visuals
+        self.do_render = do_render
         self.render_interval = render_interval
         self.render_pause = render_pause
-
-        self.max_wait_times = []
-        self.fig, ((self.node_graph, self.rewards_graph, self.max_wait_time_graph),
-                   (self.que_wait_time_graph, self.que_req_time_graph, self.que_req_proc_graph)) = \
-            plt.subplots(2, 3, figsize=(14, 5))
+        if self.do_render:
+            self.max_wait_times = []
+            self.fig, ((self.node_graph, self.rewards_graph, self.max_wait_time_graph),
+                       (self.que_wait_time_graph, self.que_req_time_graph, self.que_req_proc_graph)) = \
+                plt.subplots(2, 3, figsize=(14, 5))
 
     def reset(self):
-        self.max_wait_times = []
-        self.fig, ((self.node_graph, self.rewards_graph, self.max_wait_time_graph),
-                   (self.que_wait_time_graph, self.que_req_time_graph, self.que_req_proc_graph)) =\
-            plt.subplots(2, 3, figsize=(14, 5))
-        self.fig.tight_layout(pad=3.0)
+        if self.do_render:
+            self.max_wait_times = []
+            self.fig, ((self.node_graph, self.rewards_graph, self.max_wait_time_graph),
+                       (self.que_wait_time_graph, self.que_req_time_graph, self.que_req_proc_graph)) =\
+                plt.subplots(2, 3, figsize=(14, 5))
+            self.fig.tight_layout(pad=3.0)
 
     @staticmethod
     def get_que_data_arrays(state):
@@ -33,7 +35,7 @@ class GymGraphics:
 
     def visualize_data(self, iter, state, rewards):
 
-        if state and iter % self.render_interval == 0:
+        if self.do_render and state and iter % self.render_interval == 0:
 
             self.node_graph.clear()
             self.node_graph.bar(['Used Nodes', 'Idle Nodes'],

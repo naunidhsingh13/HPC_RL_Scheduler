@@ -10,7 +10,7 @@ def get_action_from_output_vector(output_vector, wait_queue_size, is_training):
     def softmax(z):
         return np.exp(z) / np.sum(np.exp(z))
     action_p = softmax(output_vector.flatten()[:wait_queue_size])
-    if is_training == 1:
+    if is_training:
         wait_queue_ind = np.random.choice(len(action_p), p=action_p)
     else:
         wait_queue_ind = np.argmax(action_p)
@@ -18,7 +18,7 @@ def get_action_from_output_vector(output_vector, wait_queue_size, is_training):
 
 
 def model_training(env, weights_file_name=None, is_training=False, output_file_name=None,
-                   window_size=50, learning_rate=0.1, gamma=0.99, batch_size=10):
+                   window_size=50, learning_rate=0.1, gamma=0.99, batch_size=10, do_render=False):
 
     sess = tf.Session()
     tf.keras.backend.set_session(sess)
@@ -32,7 +32,7 @@ def model_training(env, weights_file_name=None, is_training=False, output_file_n
 
     while not done:
 
-        # env.render()
+        env.render()
         output_vector = pg.act(obs.feature_vector)
 
         action = get_action_from_output_vector(output_vector, obs.wait_que_size, is_training)
@@ -47,7 +47,7 @@ def model_training(env, weights_file_name=None, is_training=False, output_file_n
 
 
 def model_engine(module_list, module_debug, job_cols=0, window_size=0,
-                 is_training=False, weights_file=None, output_file=None):
+                 is_training=False, weights_file=None, output_file=None, do_render=False):
     """
    Execute the CqSim Simulator using OpenAi based Gym Environment with Scheduling implemented using DeepRL Engine.
 
@@ -61,6 +61,6 @@ def model_engine(module_list, module_debug, job_cols=0, window_size=0,
     :return: None
     """
     cqsim_gym = CqsimEnv(module_list, module_debug,
-                         job_cols, window_size)
+                         job_cols, window_size, do_render)
     model_training(cqsim_gym, window_size=window_size, is_training=is_training,
                    weights_file_name=weights_file, output_file_name=output_file)

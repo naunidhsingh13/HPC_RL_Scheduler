@@ -109,6 +109,9 @@ def  cqsim_main(para_list):
     is_training = True if para_list['is_training'] == '1' else False
     input_weight_file = para_list['input_weight_file']
     output_weight_file = para_list['output_weight_file']
+    do_render = True if para_list['do_render'] == '1' else False
 
+    # Invoking the CqGym and PG model. This function manages the parameters required for initialization the
+    # Gym Environment along with CqSim simulator and also for loading RL model - PG.
     pg_trainer.model_engine(module_list, module_debug, job_cols, window_size,
-                            is_training, input_weight_file, output_weight_file)
+                            is_training, input_weight_file, output_weight_file, do_render)

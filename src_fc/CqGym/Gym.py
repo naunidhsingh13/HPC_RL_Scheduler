@@ -7,7 +7,7 @@ from copy import deepcopy
 
 class CqsimEnv(Env):
 
-    def __init__(self, module, debug=None, job_cols=0, window_size=0, render_interval=1, render_pause=0.01):
+    def __init__(self, module, debug=None, job_cols=0, window_size=0, do_render=False, render_interval=1, render_pause=0.01):
         Env.__init__(self)
 
         # Maintaining Variables for reset.
@@ -29,7 +29,7 @@ class CqsimEnv(Env):
                                             dtype=np.float32, low=0.0, high=1000000.0)
 
         # Define object for Graph Visualization:
-        self.graphics = GymGraphics(render_interval, render_pause)
+        self.graphics = GymGraphics(do_render, render_interval, render_pause)
         self.rewards = []
         self.iter = 0
 

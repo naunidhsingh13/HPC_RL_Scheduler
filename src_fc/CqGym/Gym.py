@@ -3,21 +3,22 @@ from gym import Env, spaces
 import numpy as np
 from CqGym.GymState import GymState
 from CqGym.GymGraphics import GymGraphics
-
+from copy import deepcopy
 
 class CqsimEnv(Env):
 
     def __init__(self, module, debug=None, job_cols=0, window_size=0, render_interval=1, render_pause=0.01):
         Env.__init__(self)
+
+        # Maintaining Variables for reset.
+        self.simulator_module = module
+        self.simulator_debug = debug
+
         # Initializing CQSim Backend
         self.simulator = Cqsim_sim(module, debug=debug)
         self.simulator.start()
         # Let Simulator load completely.
         self.simulator.pause_producer()
-
-        # Maintaining Variables for reset.
-        self.simulator_module = module
-        self.simulator_debug = debug
 
         self.gym_state = GymState()
 
@@ -38,7 +39,7 @@ class CqsimEnv(Env):
         :return: None
         """
         del self.simulator
-        self.simulator = Cqsim_sim(self.simulator_module, debug=self.simulator_debug)
+        self.simulator = Cqsim_sim(deepcopy(self.simulator_module), debug=self.simulator_debug)
         self.simulator.start()
         # Let Simulator load completely.
         self.simulator.pause_producer()

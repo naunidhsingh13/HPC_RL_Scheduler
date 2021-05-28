@@ -34,6 +34,10 @@ class GymState:
         system_status_input = self.preprocessing_system_status(node_info_list, current_time)
         self.feature_vector = self.make_feature_vector(wait_job_input, system_status_input)
 
+        def vector_reshape(vec):
+            return vec.reshape(tuple([1])+vec.shape)
+        self.feature_vector = vector_reshape(self.feature_vector)
+
         self.total_nodes = len(node_info_list)
         self.idle_nodes = idle_nodes_count
 

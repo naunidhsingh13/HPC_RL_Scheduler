@@ -1,14 +1,58 @@
-# CQSim - A Trace-based Event-Driven Scheduling Simulator
-The simulator is written in Python, and is formed by several modules including job module, node module, scheduling policy module, etc. Each module is implemented as a class. Its design principles are reusability, extensibility, and efficiency. CQSim takes job events from a workload trace (e.g., the SWF format from the well-known Parallel Workload Archive at http://www.cs.huji.ac.il/labs/parallel/workload/). Based on the events, the simulator emulates job submission, allocation, and execution according to a specific scheduling policy. 
+# CQSim Reinforcement Learning Module implementation using OpenAi Gym Environment
 
-CQSim was originally developed by Dongxu Ren and Wei Tang (version 1.0) in 2011-2012, and later was improved by Xu Yang and Yuping Fan (master branch), all under the supervision of Zhiling Lan at the Illinois Institute of Technology (http://bluesky.cs.iit.edu/cqsim/).
+### Environment :
 
-Note: if you use CQSim in your work, please cite the following papers: 
-1. X. Yang, Z. Zhou, S. Wallace, Z. Lan, W. Tang, S. Coghlan, and M. Papka, "Integrating Dynamic Pricing of Electricity into Energy Aware Scheduling for HPC Systems", Proc. of SC'13, 2013.
-2. Y. Fan, Z. Lan, P. Rich, W. Allcock, M. Papka, B. Austin, and D. Paul, "Scheduling beyond CPUs for HPC", Proc. of HPDC'19, 2019.
-3. Y. Fan, T. Childers, P. Rich, W. Allcock, M. Papka, and Z. Lan, "Deep Reinforcement Agent for Scheduling in HPC", Proc. of IPDPS'21, 2021.
+Python 3.7.x
 
-# Getting started: Run A Simple Example
+### Dependencies : 
+    gym==0.18.0
+    h5py==2.10.0
+    Keras==2.0.6
+    matplotlib==3.4.1
+    numpy==1.19.5
+    pandas==1.2.3
+    tensorflow==1.14.0
+
+### Install dependencies:
+
 ```
-python cqsim.py -j test.swf -n test.swf
+pip install -r requirements.txt
+```
+
+### Run Module using PG Training:
+
+Model Training can be simply executed using the following command:
+```
+python cqsim.py
+```
+This command automatically takes the required metadata from the configuration files in config module. 
+
+You can change the data required for the Simulator and RL model by changing the config file or pass externally along with the python command line call:
+
+```
+python cqsim.py -j theta_data.swf -n theta_data.swf -R 1000
+```
+
+All the config commands which are applicable in CqSim for managing the simulator are also available in the current implementation.
+
+Along with the commands for simulator, the configuration arguments needed for RL model are as follows :
+
+* **input_dim** : [int] Same as DRAS PG
+* **job_info_siz** : [int] Same as DRAS PG
+* **is_training** : [int] 1 - if the model should be trained, 0 - otherwise.
+* **input_weight_file** : [str] Name of the weights file to be loaded. Just
+as in DRAS PG, only the common part of the 2 weights file is
+required. “_policy_.h5” and “_predict_.h5” are concatenated
+automatically. Weights are not loaded if the parameter is empty or
+not provided.
+* **output_weight_file** : [str] Name of the weights file to
+be saved. Just as in DRAS PG, only the common part of the 2
+weights file is required. “_policy_.h5” and “_predict_.h5” are
+concatenated automatically. Weights are not saved if the parameter
+is empty or not provided.
+
+These arguments can be managed externally in the following way :
+
+```
+python cqsim.py -j theta_data.swf -n theta_data.swf -R 1000 --is_training 1 --output_weight_file C:/path_to_saving_weights
 ```

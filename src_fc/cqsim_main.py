@@ -13,7 +13,8 @@ import Extend.SWF.Filter_job_SWF as filter_job_ext
 import Extend.SWF.Filter_node_SWF as filter_node_ext
 import Extend.SWF.Node_struc_SWF as node_struc_ext
 
-import cqsim_model_engine
+import Trainer.PG_Trainer as pg_trainer
+
 
 def  cqsim_main(para_list):
     print("....................")
@@ -97,23 +98,7 @@ def  cqsim_main(para_list):
     # Output Log
     print(".................... Output Log")
     module_output_log = Class_Output_log.Output_log(output=output_fn,log_freq=log_freq_int)
-    
-    # Cqsim Simulator
-    # print(".................... Cqsim Simulator")
-    # module_list = {'job':module_job_trace,'node':module_node_struc,'backfill':module_backfill,\
-    #                'win':module_win,'alg':module_alg,'info':module_info_collect, 'output':module_output_log}
-    #
-    # cqsim_env = CqsimEnv(module=module_list, debug=module_debug)
-    #
-    # current_state = cqsim_env.get_state()
-    # done = False
-    # action = 0
-    # a = time()
-    # while not done:
-    #     # cqsim_env.render()
-    #     current_state, done, reward = cqsim_env.step(action)
-    #
-    # print("Time Consumed : ", time() - a)
+
 
     # CqSim Simulator with RL
     print(".................... Cqsim Simulator using RL")
@@ -121,5 +106,9 @@ def  cqsim_main(para_list):
                    'win': module_win, 'alg': module_alg, 'info': module_info_collect, 'output': module_output_log}
     job_cols = int(para_list['job_info_size']) // int(para_list['input_dim'])
     window_size = int(para_list['win'])
+    is_training = True if para_list['is_training'] == '1' else False
+    input_weight_file = para_list['input_weight_file']
+    output_weight_file = para_list['output_weight_file']
 
-    cqsim_model_engine.cqsim_execute(module_list, module_debug, job_cols, window_size, para_list['is_training'])
+    pg_trainer.model_engine(module_list, module_debug, job_cols, window_size,
+                            is_training, input_weight_file, output_weight_file)

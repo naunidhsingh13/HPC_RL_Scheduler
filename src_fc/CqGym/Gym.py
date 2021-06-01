@@ -20,6 +20,8 @@ class CqsimEnv(Env):
         # Let Simulator load completely.
         self.simulator.pause_producer()
 
+        GymState._job_cols_ = job_cols
+        GymState._window_size_ = window_size
         self.gym_state = GymState()
 
         # Defining Action Space and Observation Space.
@@ -76,13 +78,14 @@ class CqsimEnv(Env):
         :param action: [int] :- Wait-Queue index of the selected Job.
                                 Note - this is not Job Index.
         :return:
-        gym_state: [GymState]   :- Contains all the information for the current state.
+        gym_state: [GymState]   :- Contains all the information for the next state.
                                    gym_state.feature_vector stores Feature vector for the current state.
         done: [boolean]         :- True - If the simulation is complete.
         reward : [float]        :- reward for the current action.
         """
         self.iter += 1
         ind = action
+        print("Wait Queue at Step Func - ", self.simulator.simulator_wait_que_indices)
         self.simulator.simulator_wait_que_indices = [self.simulator.simulator_wait_que_indices[ind]] + \
                                                      self.simulator.simulator_wait_que_indices[:ind] + \
                                                      self.simulator.simulator_wait_que_indices[ind + 1:]

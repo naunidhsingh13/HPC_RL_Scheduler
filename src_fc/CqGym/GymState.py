@@ -3,6 +3,9 @@ import numpy as np
 
 class GymState:
 
+    _job_cols_ = 2
+    _window_size_ = 50
+
     def __init__(self):
         # Variable to maintain the info received
         self.current_time = None
@@ -73,9 +76,9 @@ class GymState:
         return node_info_list
 
     def make_feature_vector(self, jobs, system_status):
-        # print('self.model.job_cols',self.model.job_cols)
-        job_cols = 2
-        window_size = 50
+        # Remove hard coded part !
+        job_cols = self._job_cols_
+        window_size = self._window_size_
         input_dim = [len(system_status)+window_size*job_cols, len(system_status[0])]
 
         fv = np.zeros((1, input_dim[0], input_dim[1]))

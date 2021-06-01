@@ -175,7 +175,8 @@ class Cqsim_sim(Pause, Thread):
             self.submit(self.current_event['para'][1])
         elif (self.current_event['para'][0] == 2):
             self.finish(self.current_event['para'][1])
-        self.score_calculate()
+        # Obsolete
+        # self.score_calculate()
         self.start_scan()
     
     def submit(self, job_index):
@@ -202,20 +203,21 @@ class Cqsim_sim(Pause, Thread):
         self.module['job'].job_start(job_index, self.currentTime)
         self.insert_event(1, self.currentTime+self.module['job'].job_info(job_index)['run'], 1, [2, job_index])
         return
-    
-    def score_calculate(self):
 
-        temp_wait_list = self.module['job'].wait_list()
-        wait_num = len(temp_wait_list)
-        temp_wait = []
-        i = 0
-        while i < wait_num:
-            temp_job = self.module['job'].job_info(temp_wait_list[i])
-            temp_wait.append(temp_job)
-            i += 1
-        score_list = self.module['alg'].get_score(temp_wait, self.currentTime)
-        self.module['job'].refresh_score(score_list)
-        return
+    # Marked for deletion
+    # def score_calculate(self):
+    #
+    #     temp_wait_list = self.module['job'].wait_list()
+    #     wait_num = len(temp_wait_list)
+    #     temp_wait = []
+    #     i = 0
+    #     while i < wait_num:
+    #         temp_job = self.module['job'].job_info(temp_wait_list[i])
+    #         temp_wait.append(temp_job)
+    #         i += 1
+    #     score_list = self.module['alg'].get_score(temp_wait, self.currentTime)
+    #     self.module['job'].refresh_score(score_list)
+    #     return
 
     def reorder_queue(self, wait_que):
         """
@@ -242,6 +244,7 @@ class Cqsim_sim(Pause, Thread):
             # ************ #
             # Communicate with GymEnvironment.
             # ************ #
+            print("Wait Queue at StartScan - ", temp_wait)
             temp_wait = self.reorder_queue(temp_wait)
 
             temp_job_id = temp_wait[0]
